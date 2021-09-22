@@ -4,8 +4,10 @@ struct Player {
 	sf::Vector2f pos, velocity;
 	sf::Texture texture;
 	sf::Sprite sprite;
-	inline static sf::Vector2f size = { 0.9f, 1.8f };
+	inline static sf::Vector2f size = { 14.f / 16.f, 28.f / 16.f };
 	bool is_on_ground = true;
+
+	Player() {}
 
 	Player(Map &map) {
 		spawn_randomly(map);
@@ -38,7 +40,7 @@ struct Player {
 		}
 		else { // going right
 			if (map.is_solid(new_pos.x + size.x, pos.y) || map.is_solid(new_pos.x + size.x, pos.y + size.y * 0.5f) || map.is_solid(new_pos.x + size.x, pos.y + size.y)) {
-				new_pos.x = std::truncf(new_pos.x) + 0.09999f;
+				new_pos.x = std::truncf(new_pos.x) + 0.12499f;
 				velocity.x = 0.0f;
 			}
 		}
@@ -52,7 +54,7 @@ struct Player {
 		}
 		else { // going down
 			if (map.is_solid(new_pos.x, new_pos.y + size.y) || map.is_solid(new_pos.x + size.x, new_pos.y + size.y)) {
-				new_pos.y = std::truncf(new_pos.y) + 0.19999f;
+				new_pos.y = std::truncf(new_pos.y) + 0.24999f;
 				velocity.y = 0.0f;
 				is_on_ground = true;
 			}
@@ -72,40 +74,6 @@ struct Player {
 
 		static const float terminal_velocity = 14.0f;
 		static const float terminal_velocity_on_ground = 6.0f;
-
-		/*
-		if (is_on_ground) {
-			if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)))
-				velocity.x += ground_step * elapsed_time;
-			if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)))
-				velocity.x -= ground_step * elapsed_time;
-
-			velocity.x *= ground_friction;
-
-			velocity.x = std::min(velocity.x,  terminal_velocity_on_ground);
-			velocity.x = std::max(velocity.x, -terminal_velocity_on_ground);
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-				velocity.y = jump_velocity;
-				is_on_ground = false;
-			}
-		}
-		else {
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-				velocity.x += air_step * elapsed_time;
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-				velocity.x -= air_step * elapsed_time;
-
-			velocity.x *= air_friction;
-
-			velocity.x = std::min(velocity.x,  terminal_velocity);
-			velocity.x = std::max(velocity.x, -terminal_velocity);
-		}
-
-
-		velocity.y = std::min(velocity.y,  terminal_velocity);
-		velocity.y = std::max(velocity.y, -terminal_velocity);
-		*/
 
 		if (has_focus) {
 			if (is_on_ground) {
@@ -147,13 +115,22 @@ struct Player {
 		velocity.y = std::max(velocity.y, -terminal_velocity * elapsed_time);
 	}
 
-	sf::Vector2f get_center() {
+	void draw(sf::RenderWindow &window, float off_x, float off_y, float scale) {
+		static sf::RectangleShape shape;
+
+		shape.setPosition((pos - sf::Vector2f(off_x, off_y)) * scale);
+		shape.setFillColor(sf::Color::Green);
+		shape.setSize({ size.x * scale , size.y * scale });
+		window.draw(shape);
+	}
+
+	sf::Vector2f get_camera_center() {
 		return pos + size * 0.5f;
 	}
 
 	void spawn_randomly(Map &map) {
 		pos = map.get_random_solid_position();
 		pos.y -= size.y;
-		pos.x += (std::ceil(size.x) - size.x) * 0.5f;
+		pos.x += (std::ceilf(size.x) - size.x) * 0.5f;
 	}
 };

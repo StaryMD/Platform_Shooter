@@ -1,12 +1,14 @@
 #pragma once
 
+#include <bitset>
+
 void draw_ontop(sf::Image &image, const std::string &path, int x, int y) {
 	sf::Image temp;
 	temp.loadFromFile(path);
 
 	for (int i = 0; i < TILE_SIZE; i++)
 		for (int j = 0; j < TILE_SIZE; j++)
-			image.setPixel(j + x, i + y, temp.getPixel(j, i));
+			image.setPixel(x + j, y + i, temp.getPixel(j, i));
 }
 
 sf::Texture load_textures_from_map(const std::string &map_name) {

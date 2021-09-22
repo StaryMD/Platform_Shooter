@@ -12,7 +12,7 @@ struct Camera {
 	}
 
 	sf::FloatRect get_visible_space(Player &player) {
-		sf::Vector2f pos = player.pos;
+		sf::Vector2f pos = player.get_camera_center();
 
 		pos -= tile_count_per_side * 0.5f;
 
